@@ -31,6 +31,7 @@ export function ModelSelector({
 
   return (
     <select
+      title="Select a model"
       value={selectedModel}
       onChange={(e) => onModelChange(e.target.value)}
       disabled={loading}

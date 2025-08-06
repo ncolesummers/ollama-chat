@@ -39,6 +39,7 @@ export function ChatInput({
       />
       {isLoading ? (
         <button
+          title="Stop"
           type="button"
           onClick={onStop}
           className="rounded-lg bg-red-500 p-3 text-white hover:bg-red-600"
@@ -47,6 +48,7 @@ export function ChatInput({
         </button>
       ) : (
         <button
+          title="Send"
           type="submit"
           disabled={!input.trim()}
           className="rounded-lg bg-blue-500 p-3 text-white hover:bg-blue-600 disabled:opacity-50"
