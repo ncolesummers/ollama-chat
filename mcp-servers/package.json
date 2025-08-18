@@ -1,0 +1,10 @@
+{
+  "name": "context-manager-mcp-servers",
+  "version": "1.0.0",
+  "description": "MCP servers for context manager agent",
+  "private": true,
+  "dependencies": {
+    "@modelcontextprotocol/server-redis": "latest",
+    "@elastic/mcp-server-elasticsearch": "latest"
+  }
+}

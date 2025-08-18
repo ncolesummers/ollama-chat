@@ -10,6 +10,9 @@
 !.yarn/releases
 !.yarn/versions
 
+# Node Modules anywhere
+**/node_modules
+
 # testing
 /coverage
 
@@ -39,3 +42,15 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Elastic
+elasticsearch-data
+
+# Redis
+redis-data
+
+# Qdrant
+qdrant-data
+
+# Playwright MCP files
+.playwright-mcp

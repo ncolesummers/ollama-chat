@@ -1,4 +1,4 @@
-import { ollama } from 'ollama-ai-provider';
+import { createOllama } from 'ollama-ai-provider-v2';
 
 export interface OllamaModel {
   id: string;
@@ -68,7 +68,19 @@ export const modelConfig: Record<string, OllamaModel> = {
     capabilities: ['vision', 'chat', 'image-analysis'],
     supportsImages: true,
   },
+  'gpt-oss': {
+    id: 'gpt-oss',
+    name: 'GPT-OSS',
+    description: 'OpenAI\'s open-weight language model',
+    contextLength: 8192,
+    capabilities: ['chat', 'code', 'reasoning', 'analysis'],
+  },
 };
+
+// Create Ollama provider instance
+const ollama = createOllama({
+  baseURL: process.env.OLLAMA_BASE_URL || 'http://localhost:11434/api',
+});
 
 // Create model instances
 export const getOllamaModel = (modelId: string) => {
@@ -77,7 +89,12 @@ export const getOllamaModel = (modelId: string) => {
     throw new Error(`Model ${modelId} not found`);
   }
   
-  // ollama function takes model name and optional settings
+  // Special handling for gpt-oss which uses specific version tags
+  if (modelId === 'gpt-oss') {
+    return ollama('gpt-oss:20b');
+  }
+  
+  // Return the model with the provider
   return ollama(modelId + ':latest');
 };
 
@@ -95,12 +112,18 @@ export async function getAvailableModels(): Promise<OllamaModel[]> {
       size: number;
     }
     
-    const availableModels = (data.models as OllamaApiModel[])
-      .map((m) => {
-        const modelName = m.name.split(':')[0];
-        return modelConfig[modelName];
-      })
-      .filter(Boolean);
+    // Use a Set to track unique model names to avoid duplicates
+    const uniqueModelNames = new Set<string>();
+    const availableModels: OllamaModel[] = [];
+    
+    for (const m of data.models as OllamaApiModel[]) {
+      const modelName = m.name.split(':')[0];
+      // Skip if we've already added this model or if it's not in our config
+      if (!uniqueModelNames.has(modelName) && modelConfig[modelName]) {
+        uniqueModelNames.add(modelName);
+        availableModels.push(modelConfig[modelName]);
+      }
+    }
     
     // If no matching models found, return a default set
     if (availableModels.length === 0) {
